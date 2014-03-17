@@ -16,7 +16,7 @@ To use this, you will need to have a "user-scripts" browser extension installed:
 
 1. Click the Tampermonkey icon in the top-right of your browser
 2. Click "Add a new script..."
-3. In the editor, copy and paste the `VertcoinTipBotButton.js` code.
+3. In the editor, copy and paste the `VertcoinTipBotButton.user.js` code at: [https://raw.github.com/FuzzyWuzzie/VertcoinTipBotButton/master/VertcoinTipBotButton.user.js](https://raw.github.com/FuzzyWuzzie/VertcoinTipBotButton/master/VertcoinTipBotButton.user.js)
 4. Click the save button (or press `CTRL+S`).
 
 It's that simple!
@@ -24,4 +24,6 @@ It's that simple!
 ### Firefox (Using Greasemonkey)
 
 1. Click on this link: [https://raw.github.com/FuzzyWuzzie/VertcoinTipBotButton/master/VertcoinTipBotButton.user.js](https://raw.github.com/FuzzyWuzzie/VertcoinTipBotButton/master/VertcoinTipBotButton.user.js)
-2. Follow Greasemonkey's instructions.
+2. Click `Install` once the timer finishes
+
+Even simpler!
