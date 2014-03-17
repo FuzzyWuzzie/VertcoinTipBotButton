@@ -1,10 +1,11 @@
 // ==UserScript==
-// @name	   VertcoinTipBot Button
-// @namespace  http://hamaluik.com/gmscripts
-// @version	0.1
-// @description  Adds a button on Reddit comments to enable easily tipping that comment using Vertcoins
-// @match	  http://www.reddit.com/r/*/comments/*
-// @copyright  2014 Kenton Hamaluik
+// @name          VertcoinTipBot Button
+// @namespace     http://hamaluik.com/gmscripts
+// @version       0.1
+// @description   Adds a button on Reddit comments to enable easily tipping that comment using Vertcoins
+// @match         http://www.reddit.com/r/*/comments/*
+// @copyright     2014 Kenton Hamaluik
+// @grant         none
 // ==/UserScript==
 
 /********************************************************************************
@@ -31,15 +32,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ********************************************************************************/
 
-vtcTipCommand = '+/u/vertcointipbot $numVTC vertcoins';
-vtcCurrentLink = null;
-vtcDropdownTimeout = null;
+window.vtcTipCommand = '+/u/vertcointipbot $numVTC vertcoins';
+window.vtcCurrentLink = null;
+window.vtcDropdownTimeout = null;
 
 // modified default reply function
-vtcTipReply = function(a, tipAmount) {
+window.vtcTipReply = function(a, tipAmount) {
 	// hide the drop down
 	$('#vtcTipDropdown').css('display', 'none');
-	vtcDropdownTimeout = null;
+	window.vtcDropdownTimeout = null;
 
 	// prompt the user for an amount if thye didn't choose a standard option
 	if(tipAmount == '?')
@@ -49,7 +50,7 @@ vtcTipReply = function(a, tipAmount) {
 		c = b.find("textarea");
 
 	// insert the tip into the textbox
-	c.val(vtcTipCommand.replace('$numVTC', tipAmount));
+	c.val(window.vtcTipCommand.replace('$numVTC', tipAmount));
 
 	// continue on as normal
 	if (window.getSelection && c.val().length == 0) {
@@ -71,7 +72,7 @@ vtcTipReply = function(a, tipAmount) {
 function vtcAddButtons() {
 	// add a link with a dropdown menu in the line of links below each comment
 	$('.flat-list').each(function() {
-		$(this).find('li:last-child').before('<li class="vtcTipLi"><a href="javascript:void(0)" class="vtcTipLink" onclick="return vtcTipReply(this, \'?\')">tip VTC</a></li>');
+		$(this).find('li:last-child').before('<li class="vtcTipLi"><a href="javascript:void(0)" class="vtcTipLink" onclick="return window.vtcTipReply(this, \'?\')">tip VTC</a></li>');
 	});
 
 	// when we hover the link, show the dropdown menu
@@ -86,16 +87,16 @@ function vtcAddButtons() {
 
 		// we need to save where we're coming from so the
 		// links know which reply box to paste into
-		vtcCurrentLink = $(this).find('.vtcTipLink');
+		window.vtcCurrentLink = $(this).find('.vtcTipLink');
 	});
 
 	// we want the menu to disappear when we stop hovering over it
 	// the easiest way to do this is to hack a timeout so that
 	// 200 ms after we mouse over, the dropdown becomes invisible
 	$('.vtcTipLi').mouseleave(function() {
-		vtcDropdownTimeout = window.setTimeout(function() {
+		window.vtcDropdownTimeout = window.setTimeout(function() {
 			$('#vtcTipDropdown').css('display', 'none');
-			vtcDropdownTimeout = null;
+			window.vtcDropdownTimeout = null;
 		}, 200);
 	});
 
@@ -103,9 +104,9 @@ function vtcAddButtons() {
 	// so if they mouseover it before the 200 ms (defined above)
 	// is up, cancel the drop-down hiding
 	$('#vtcTipDropdown').mouseenter(function() {
-		if(vtcDropdownTimeout !== null) {
-			window.clearTimeout(vtcDropdownTimeout);
-			vtcDropdownTimeout = null;
+		if(window.vtcDropdownTimeout !== null) {
+			window.clearTimeout(window.vtcDropdownTimeout);
+			window.vtcDropdownTimeout = null;
 		}
 	});
 
@@ -125,7 +126,7 @@ function vtcAddButtons() {
 	$('.tipVTCButton').click(function() {
 		var tipAmount = prompt('How much VTC do you want to tip?', '0.1');
 		var textarea = $(this).closest('.usertext-edit').find('textarea');
-		textarea.val(textarea.val() + '\n\n' + vtcTipCommand.replace('$numVTC', tipAmount));
+		textarea.val(textarea.val() + '\n\n' + window.vtcTipCommand.replace('$numVTC', tipAmount));
 	});
 }
 
@@ -136,48 +137,48 @@ function vtcCreateDropdown() {
 	$('body').append('\
 		<div id="vtcTipDropdown">\
 			<ul>\
-				<li onclick="return vtcTipReply(vtcCurrentLink, 0.1)">0.1 VTC</li>\
-				<li onclick="return vtcTipReply(vtcCurrentLink, 0.5)">0.5 VTC</li>\
-				<li onclick="return vtcTipReply(vtcCurrentLink, 1.0)">1.0 VTC</li>\
-				<li onclick="return vtcTipReply(vtcCurrentLink, \'?\')">Custom</li>\
+				<li onclick="return window.vtcTipReply(window.vtcCurrentLink, 0.1)">0.1 VTC</li>\
+				<li onclick="return window.vtcTipReply(window.vtcCurrentLink, 0.5)">0.5 VTC</li>\
+				<li onclick="return window.vtcTipReply(window.vtcCurrentLink, 1.0)">1.0 VTC</li>\
+				<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'?\')">Custom</li>\
 				<li>Keywords\
 					<ul class="vtcTipSubDropdown">\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'all\')">All</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'upvote\')">Upvote (0.1)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'cookie\')">Cookie (0.33)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'coffee\')">Coffee (1.0)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'nothing\')">Nothing (0.01)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'fart\')">Fart (0.05)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'gum\')">Gum (1.5)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'beer\')">Beer (3.5)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'nicebeer\')">Nicebeer (5.0)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'hug\')">Hug (0.5)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'kiss\')">Kiss (1.0)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'highfive\')">Highfive&nbsp;(0.25)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'nyan\')">Nyan (1.1111)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'all\')">All</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'upvote\')">Upvote (0.1)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'cookie\')">Cookie (0.33)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'coffee\')">Coffee (1.0)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'nothing\')">Nothing (0.01)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'fart\')">Fart (0.05)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'gum\')">Gum (1.5)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'beer\')">Beer (3.5)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'nicebeer\')">Nicebeer (5.0)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'hug\')">Hug (0.5)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'kiss\')">Kiss (1.0)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'highfive\')">Highfive&nbsp;(0.25)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'nyan\')">Nyan (1.1111)</li>\
 					</ul>\
 				</li>\
 				<li>Random\
 					<ul class="vtcTipSubDropdown">\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'flip\')">Flip (min tip * 1..2)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'megaflip\')">Megaflip (min tip * 1..20)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'gigaflip\')">Gigaflip (min tip * 1..200)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'roll\')">Roll (min tip * 1..6)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'megaroll\')">Megaroll (min tip * 1..60)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'gigaroll\')">Gigaroll&nbsp;(min&nbsp;tip&nbsp;*&nbsp;1..600)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'random01\')">Random01 (0..0.1)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'random05\')">Random05 (0..0.5)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'random1\')">Random1 (0..1)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'random3\')">Random3 (0..3)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'random5\')">Random5 (0..5)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'random10\')">Random10 (0..10)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'random15\')">Random15 (0..15)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'random25\')">Random25 (0..25)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'random50\')">Random50 (0..50)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'random100\')">Random100 (0..100)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'random250\')">Random250 (0..250)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'random500\')">Random500 (0..500)</li>\
-						<li onclick="return vtcTipReply(vtcCurrentLink, \'random1000\')">Random1000 (0..1000)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'flip\')">Flip (min tip * 1..2)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'megaflip\')">Megaflip (min tip * 1..20)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'gigaflip\')">Gigaflip (min tip * 1..200)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'roll\')">Roll (min tip * 1..6)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'megaroll\')">Megaroll (min tip * 1..60)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'gigaroll\')">Gigaroll&nbsp;(min&nbsp;tip&nbsp;*&nbsp;1..600)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'random01\')">Random01 (0..0.1)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'random05\')">Random05 (0..0.5)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'random1\')">Random1 (0..1)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'random3\')">Random3 (0..3)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'random5\')">Random5 (0..5)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'random10\')">Random10 (0..10)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'random15\')">Random15 (0..15)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'random25\')">Random25 (0..25)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'random50\')">Random50 (0..50)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'random100\')">Random100 (0..100)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'random250\')">Random250 (0..250)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'random500\')">Random500 (0..500)</li>\
+						<li onclick="return window.vtcTipReply(window.vtcCurrentLink, \'random1000\')">Random1000 (0..1000)</li>\
 					</ul>\
 				</li>\
 			</ul>\
